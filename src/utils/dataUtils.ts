@@ -156,4 +156,12 @@ export const getTestCategories = (data: AllResults): Record<string, string[]> =>
   });
   
   return categories;
+};
+
+/**
+ * Rounds a number to the specified number of decimal places
+ */
+export const roundToDecimalPlaces = (num: number, decimalPlaces: number = 2): number => {
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.round(num * factor) / factor;
 }; 

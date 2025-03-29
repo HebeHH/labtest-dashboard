@@ -20,9 +20,11 @@ import {
   getColorForAcceptability, 
   getBackgroundColorForAcceptability,
   parseDate,
-  formatDate
+  formatDate,
+  roundToDecimalPlaces
 } from '../utils/dataUtils';
 import labResults from '../data/labData';
+import { format } from 'date-fns';
 
 interface SingleTestChartProps {
   testName: string;
@@ -48,8 +50,10 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
         return null;
       }
       
+      const date = parseDate(result.date);
       return {
-        date: parseDate(result.date),
+        date: date, // Store actual Date object
+        timestamp: date.getTime(), // Store timestamp for proper x-axis scaling
         formattedDate: result.date,
         value: result.result.result,
         acceptability: result.result.resultAcceptability,
@@ -72,13 +76,46 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
   
   // Calculate min and max values for the chart
   const values = chartData.map(d => d!.value);
-  const minValue = Math.min(...values) * 0.9;
-  const maxValue = Math.max(...values) * 1.1;
+  const dataMinValue = Math.min(...values);
+  const dataMaxValue = Math.max(...values);
   
-  // Create reference areas for target ranges
+  // Get the range min/max from the target ranges
+  const rangeMin = Math.min(
+    ...ranges
+      .filter(r => r.bottom !== undefined)
+      .map(r => r.bottom!)
+  );
+  const rangeMax = Math.max(
+    ...ranges
+      .filter(r => r.top !== undefined)
+      .map(r => r.top!)
+  );
+  
+  // Determine the chart min/max values to include both data points and full target ranges
+  const padding = 0.1;
+  const minValue = Math.min(dataMinValue, rangeMin) * (1 - padding);
+  const maxValue = Math.max(dataMaxValue, rangeMax) * (1 + padding);
+  
+  // Create reference areas for target ranges that cover the entire chart height
   const referenceAreas = ranges.map((range, index) => {
-    const y1 = range.bottom !== undefined ? range.bottom : minValue;
-    const y2 = range.top !== undefined ? range.top : maxValue;
+    let y1, y2;
+    
+    if (range.bottom !== undefined && range.top !== undefined) {
+      // Both bottom and top defined
+      y1 = range.bottom;
+      y2 = range.top;
+    } else if (range.bottom !== undefined) {
+      // Only bottom defined (upper range)
+      y1 = range.bottom;
+      y2 = maxValue;
+    } else if (range.top !== undefined) {
+      // Only top defined (lower range)
+      y1 = minValue;
+      y2 = range.top;
+    } else {
+      // Neither defined (shouldn't happen)
+      return null;
+    }
     
     return (
       <ReferenceArea
@@ -94,11 +131,13 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
+      const formattedDate = format(new Date(label), 'dd MMM yyyy');
+      
       return (
         <div className="bg-white p-4 shadow-lg rounded-lg border border-gray-200">
-          <p className="font-bold">{data.formattedDate}</p>
+          <p className="font-bold">{formattedDate}</p>
           <p className="text-gray-700">
-            Value: <span className="font-medium">{data.value} {test.units}</span>
+            Value: <span className="font-medium">{roundToDecimalPlaces(data.value)} {test.units}</span>
           </p>
           <p className="mt-1">
             <span 
@@ -133,17 +172,33 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
           >
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
             <XAxis 
-              dataKey="formattedDate" 
+              dataKey="timestamp" 
+              type="number"
+              domain={['dataMin', 'dataMax']}
+              tickFormatter={(timestamp) => format(new Date(timestamp), 'MMM yyyy')}
               tick={{ fontSize: 12 }}
               tickMargin={10}
+              scale="time"
             />
             <YAxis 
-              domain={[minValue, maxValue]} 
-              unit={test.units}
+              domain={[minValue, maxValue]}
+              tickFormatter={(value) => roundToDecimalPlaces(value).toString()}
               tick={{ fontSize: 12 }}
               width={60}
+              label={{
+                value: test.units,
+                angle: -90,
+                position: 'insideLeft',
+                dy: 45,
+                dx: -10,
+                fontSize: 12,
+                fill: '#666'
+              }}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip 
+              content={<CustomTooltip />} 
+              labelFormatter={(timestamp) => format(new Date(timestamp), 'dd MMM yyyy')}
+            />
             {referenceAreas}
             <Line
               type="monotone"

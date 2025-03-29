@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { getResultsForTest, findTestByName, getColorForAcceptability } from '../utils/dataUtils';
+import { getResultsForTest, findTestByName, getColorForAcceptability, roundToDecimalPlaces } from '../utils/dataUtils';
 import labResults from '../data/labData';
 import { OutcomeAcceptability } from '../types/labDataTypes';
 
@@ -68,7 +68,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ testName }) => {
                 
                 if (isValid) {
                   status = (result.result as any).resultAcceptability;
-                  displayValue = `${(result.result as any).result} ${test.units}`;
+                  displayValue = `${roundToDecimalPlaces((result.result as any).result)} ${test.units}`;
                 }
                 
                 return (

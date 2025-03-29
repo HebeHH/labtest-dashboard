@@ -15,10 +15,13 @@ import {
   findTestByName, 
   getValidResultsWithDates, 
   formatDate,
-  getColorForAcceptability 
+  getColorForAcceptability,
+  roundToDecimalPlaces,
+  parseDate 
 } from '../utils/dataUtils';
 import labResults from '../data/labData';
 import { OutcomeAcceptability } from '../types/labDataTypes';
+import { format } from 'date-fns';
 
 interface MultiTestChartProps {
   testNames: string[];
@@ -27,6 +30,7 @@ interface MultiTestChartProps {
 // Define interfaces for our chart data
 interface ChartDataPoint {
   date: string;
+  timestamp: number;
   [key: `value${number}`]: number;
   [key: `acceptability${number}`]: OutcomeAcceptability;
 }
@@ -99,7 +103,10 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames }) => {
   
   // Create a combined dataset with all dates
   const dateArray = Array.from(allDates).sort();
-  const combinedData: Partial<ChartDataPoint>[] = dateArray.map(date => ({ date }));
+  const combinedData: Partial<ChartDataPoint>[] = dateArray.map(date => ({ 
+    date,
+    timestamp: parseDate(date).getTime() // Add timestamp for proper x-axis scaling
+  }));
   
   // Add test results to the combined dataset
   validTests.forEach((testItem, testIndex) => {
@@ -122,15 +129,17 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames }) => {
   });
   
   const sortedData = combinedData.sort((a, b) => {
-    return new Date(a.date as string).getTime() - new Date(b.date as string).getTime();
+    return (a.timestamp as number) - (b.timestamp as number);
   });
   
   // Custom tooltip to show all values on hover
   const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
     if (active && payload && payload.length > 0) {
+      const formattedDate = label ? format(new Date(label), 'dd MMM yyyy') : '';
+      
       return (
         <div className="bg-white p-4 shadow-lg rounded-lg border border-gray-200">
-          <p className="font-bold">{label}</p>
+          <p className="font-bold">{formattedDate}</p>
           <div className="mt-2 space-y-2">
             {validTests.map((testItem, index) => {
               const payloadItem = payload.find(p => p.dataKey === `value${index}`);
@@ -149,7 +158,7 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames }) => {
                     <span className="text-sm font-medium mr-2">{testItem.test?.name}:</span>
                   </div>
                   <div className="flex items-center">
-                    <span className="text-sm">{payloadItem.value} {testItem.test?.units}</span>
+                    <span className="text-sm">{roundToDecimalPlaces(payloadItem.value)} {testItem.test?.units}</span>
                     <span 
                       className="ml-2 px-2 py-0.5 rounded text-xs font-medium text-white"
                       style={{ backgroundColor: getColorForAcceptability(acceptability) }}
@@ -186,7 +195,13 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames }) => {
             margin={{ top: 20, right: 60, left: 20, bottom: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-            <XAxis dataKey="date" />
+            <XAxis 
+              dataKey="timestamp" 
+              type="number"
+              domain={['dataMin', 'dataMax']}
+              tickFormatter={(timestamp) => format(new Date(timestamp), 'MMM yyyy')}
+              scale="time" 
+            />
             
             {validTests.map((testItem, index) => {
               // Calculate domain for this test
@@ -194,18 +209,42 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames }) => {
               const min = Math.min(...values) * 0.9;
               const max = Math.max(...values) * 1.1;
               
+              // Get the range min/max from the target ranges if available
+              let rangeMin = min;
+              let rangeMax = max;
+              
+              if (testItem.test?.target?.range) {
+                const ranges = testItem.test.target.range;
+                const rangeBottoms = ranges.filter(r => r.bottom !== undefined).map(r => r.bottom!);
+                const rangeTops = ranges.filter(r => r.top !== undefined).map(r => r.top!);
+                
+                if (rangeBottoms.length > 0) {
+                  rangeMin = Math.min(rangeMin, ...rangeBottoms);
+                }
+                
+                if (rangeTops.length > 0) {
+                  rangeMax = Math.max(rangeMax, ...rangeTops);
+                }
+              }
+              
+              // Add some padding
+              const padding = 0.1;
+              const domainMin = rangeMin * (1 - padding);
+              const domainMax = rangeMax * (1 + padding);
+              
               return (
                 <YAxis
                   key={`axis-${index}`}
                   yAxisId={`axis-${index}`}
                   orientation={index % 2 === 0 ? 'left' : 'right'}
-                  domain={[min, max]}
-                  tickFormatter={(value) => `${value}`}
+                  domain={[domainMin, domainMax]}
+                  tickFormatter={(value) => roundToDecimalPlaces(value).toString()}
                   label={{
                     value: testItem.test?.units,
                     angle: index % 2 === 0 ? -90 : 90,
                     position: index % 2 === 0 ? 'insideLeft' : 'insideRight',
-                    dy: index % 2 === 0 ? -20 : 20,
+                    dx: index % 2 === 0 ? -15 : 15,
+                    dy: 0,
                     fontSize: 11,
                     fill: colors[index % colors.length]
                   }}
@@ -216,7 +255,10 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames }) => {
               );
             })}
             
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip 
+              content={<CustomTooltip />} 
+              labelFormatter={(timestamp) => format(new Date(timestamp), 'dd MMM yyyy')}
+            />
             <Legend />
             
             {validTests.map((testItem, index) => (
