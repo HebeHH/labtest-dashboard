@@ -233,6 +233,7 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName, startDate, 
                 if (!props.cx || !props.cy) {
                   return (
                     <circle
+                      key={`dot-empty-${props.index}`}
                       cx={0}
                       cy={0}
                       r={0}
@@ -245,6 +246,7 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName, startDate, 
                 const acceptability = props.payload.acceptability;
                 return (
                   <circle
+                    key={`dot-${props.index}`}
                     cx={props.cx}
                     cy={props.cy}
                     r={6}

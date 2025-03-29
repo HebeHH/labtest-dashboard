@@ -300,6 +300,7 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames, startDate, e
                   if (!props.cx || !props.cy) {
                     return (
                       <circle
+                        key={`dot-empty-${index}-${props.index}`}
                         cx={0}
                         cy={0}
                         r={0}
@@ -314,6 +315,7 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames, startDate, e
                   if (!acceptability) {
                     return (
                       <circle
+                        key={`dot-default-${index}-${props.index}`}
                         cx={cx}
                         cy={cy}
                         r={5}
@@ -326,6 +328,7 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames, startDate, e
                   
                   return (
                     <circle
+                      key={`dot-${index}-${props.index}`}
                       cx={cx}
                       cy={cy}
                       r={5}
