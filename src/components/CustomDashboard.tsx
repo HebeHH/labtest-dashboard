@@ -305,7 +305,17 @@ export const CustomDashboard: React.FC = () => {
           className="w-full flex justify-between items-center p-6 text-left" 
           onClick={toggleDateRangeCollapse}
         >
-          <h2 className="text-lg font-semibold text-gray-800">Date Range</h2>
+          <div className="flex items-center">
+            <svg 
+              className="h-5 w-5 text-blue-500 mr-2" 
+              viewBox="0 0 20 20" 
+              fill="currentColor" 
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path fillRule="evenodd" clipRule="evenodd" d="M6 2C5.44772 2 5 2.44772 5 3V4H4C2.89543 4 2 4.89543 2 6V16C2 17.1046 2.89543 18 4 18H16C17.1046 18 18 17.1046 18 16V6C18 4.89543 17.1046 4 16 4H15V3C15 2.44772 14.5523 2 14 2C13.4477 2 13 2.44772 13 3V4H7V3C7 2.44772 6.55228 2 6 2ZM16 8H4V16H16V8Z" />
+            </svg>
+            <h2 className="text-lg font-semibold text-gray-800">Date Range</h2>
+          </div>
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
             className={`h-5 w-5 text-blue-500 transform transition-transform ${dateRangeCollapsed ? 'rotate-180' : ''}`}
@@ -318,7 +328,7 @@ export const CustomDashboard: React.FC = () => {
         
         {!dateRangeCollapsed && (
           <div className="px-6 pb-6 border-t border-blue-50 pt-4">
-            <div className="flex flex-wrap gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
               <div>
                 <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 mb-1">
                   Start Date
@@ -328,7 +338,7 @@ export const CustomDashboard: React.FC = () => {
                   id="start-date"
                   value={startDate}
                   onChange={handleStartDateChange}
-                  className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -340,14 +350,19 @@ export const CustomDashboard: React.FC = () => {
                   id="end-date"
                   value={endDate}
                   onChange={handleEndDateChange}
-                  className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
               </div>
               {calculatedStartDate && calculatedEndDate && (
-                <div className="flex items-end">
-                  <p className="text-sm text-gray-500">
-                    Showing data from {format(calculatedStartDate, 'dd MMM yyyy')} to {format(calculatedEndDate, 'dd MMM yyyy')}
-                  </p>
+                <div className="sm:col-span-2">
+                  <div className="flex items-center px-3 py-2 bg-blue-50 rounded-md">
+                    <svg className="h-4 w-4 text-blue-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-sm text-gray-700">
+                      {format(calculatedStartDate, 'dd MMM yyyy')} - {format(calculatedEndDate, 'dd MMM yyyy')}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -361,7 +376,18 @@ export const CustomDashboard: React.FC = () => {
           className="w-full flex justify-between items-center p-6 text-left" 
           onClick={toggleAddGraphCollapse}
         >
-          <h2 className="text-lg font-semibold text-gray-800">Add Graph</h2>
+          <div className="flex items-center">
+            <svg 
+              className="h-5 w-5 text-blue-500 mr-2" 
+              viewBox="0 0 20 20" 
+              fill="currentColor" 
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M2 11C2 10.4477 2.44772 10 3 10H17C17.5523 10 18 10.4477 18 11C18 11.5523 17.5523 12 17 12H3C2.44772 12 2 11.5523 2 11Z" />
+              <path d="M10 2C10.5523 2 11 2.44772 11 3V17C11 17.5523 10.5523 18 10 18C9.44772 18 9 17.5523 9 17V3C9 2.44772 9.44772 2 10 2Z" />
+            </svg>
+            <h2 className="text-lg font-semibold text-gray-800">Add Graph</h2>
+          </div>
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
             className={`h-5 w-5 text-blue-500 transform transition-transform ${addGraphCollapsed ? 'rotate-180' : ''}`}
@@ -373,67 +399,90 @@ export const CustomDashboard: React.FC = () => {
         </button>
         
         {!addGraphCollapsed && (
-          <div className="px-6 pb-6 border-t border-blue-50 pt-4 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Graph Type
-              </label>
-              <div className="flex space-x-4">
-                <label className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    className="form-radio text-blue-600"
-                    checked={graphType === 'single'}
-                    onChange={() => setGraphType('single')}
-                  />
-                  <span className="ml-2">Individual Charts</span>
-                </label>
-                <label className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    className="form-radio text-blue-600"
-                    checked={graphType === 'multi'}
-                    onChange={() => setGraphType('multi')}
-                  />
-                  <span className="ml-2">Combined Chart</span>
-                </label>
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Select Tests
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {availableTests.map(testName => (
-                  <label key={testName} className="inline-flex items-center">
-                    <input
-                      type="checkbox"
-                      className="form-checkbox text-blue-600"
-                      checked={selectedTests.includes(testName)}
-                      onChange={() => toggleTestSelection(testName)}
-                    />
-                    <span className="ml-2 text-sm truncate">{testName}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            
-            <div>
+          <div className="border-t border-blue-50">
+            {/* Graph Type Tabs */}
+            <div className="flex border-b border-blue-50">
               <button
-                onClick={addGraph}
-                disabled={selectedTests.length === 0}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                className={`flex-1 py-3 px-4 text-center font-medium text-sm transition-colors ${
+                  graphType === 'single' 
+                    ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50' 
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-blue-50/30'
+                }`}
+                onClick={() => setGraphType('single')}
               >
-                Add {graphType === 'single' ? selectedTests.length > 1 ? `${selectedTests.length} Individual Charts` : 'Chart' : 'Combined Chart'}
+                Individual Charts
               </button>
-              <span className="ml-2 text-sm text-gray-500">
-                {selectedTests.length === 0 
-                  ? 'Please select at least one test.'
-                  : graphType === 'single' 
-                    ? `Selected ${selectedTests.length} test${selectedTests.length !== 1 ? 's' : ''}`
-                    : `Selected ${selectedTests.length} test${selectedTests.length !== 1 ? 's' : ''} for combined chart`}
-              </span>
+              <button
+                className={`flex-1 py-3 px-4 text-center font-medium text-sm transition-colors ${
+                  graphType === 'multi' 
+                    ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50' 
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-blue-50/30'
+                }`}
+                onClick={() => setGraphType('multi')}
+              >
+                Combined Chart
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <div className="mb-4">
+                <label className="flex items-center justify-between">
+                  <span className="block text-sm font-medium text-gray-700">
+                    Select Tests
+                    {selectedTests.length > 0 && (
+                      <span className="ml-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
+                        {selectedTests.length} selected
+                      </span>
+                    )}
+                  </span>
+                  {selectedTests.length > 0 && (
+                    <button 
+                      className="text-xs text-gray-500 hover:text-gray-700"
+                      onClick={() => setSelectedTests([])}
+                    >
+                      Clear selection
+                    </button>
+                  )}
+                </label>
+                <div className="mt-2 p-3 border border-blue-100 rounded-md bg-blue-50/20 max-h-60 overflow-y-auto">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {availableTests.map(testName => (
+                      <label key={testName} className="inline-flex items-start cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          className="mt-0.5 form-checkbox text-blue-600 rounded"
+                          checked={selectedTests.includes(testName)}
+                          onChange={() => toggleTestSelection(testName)}
+                        />
+                        <span className="ml-2 text-sm text-gray-700 group-hover:text-gray-900 truncate">
+                          {testName}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-between items-center pt-2">
+                <span className="text-sm text-gray-500">
+                  {graphType === 'single'
+                    ? 'Creates a separate chart for each selected test'
+                    : 'Creates one chart comparing all selected tests'}
+                </span>
+                <button
+                  onClick={addGraph}
+                  disabled={selectedTests.length === 0}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors inline-flex items-center"
+                >
+                  <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Add {graphType === 'single' 
+                    ? selectedTests.length > 1 ? `${selectedTests.length} Charts` : 'Chart' 
+                    : 'Combined Chart'
+                  }
+                </button>
+              </div>
             </div>
           </div>
         )}
