@@ -9,6 +9,7 @@ type LabDataContextType = {
   labData: AllResults;
   isLoading: boolean;
   error: string | null;
+  refetch: () => Promise<void>;
 };
 
 // Create the context with default values
@@ -16,6 +17,7 @@ const LabDataContext = createContext<LabDataContextType>({
   labData: { tests: [], results: [] },
   isLoading: true,
   error: null,
+  refetch: async () => {},
 });
 
 // Custom hook to access the lab data context
@@ -27,25 +29,36 @@ export const LabDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchData = async () => {
+    console.log('Fetching lab data...');
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const data = await loadLabData();
+      
+      if (!data || (!data.tests?.length && !data.results?.length)) {
+        console.error('No data received from loadLabData');
+        setError('No lab data found. Please check your data files.');
+      } else {
+        console.log(`Successfully loaded data: ${data.tests.length} tests, ${data.results.length} results`);
+        setLabData(data);
+      }
+    } catch (err) {
+      console.error('Error loading lab data:', err);
+      setError('Failed to load lab data. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Load data when the provider mounts
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await loadLabData();
-        setLabData(data);
-        setIsLoading(false);
-      } catch (err) {
-        console.error('Error loading lab data:', err);
-        setError('Failed to load lab data');
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
   return (
-    <LabDataContext.Provider value={{ labData, isLoading, error }}>
+    <LabDataContext.Provider value={{ labData, isLoading, error, refetch: fetchData }}>
       {children}
     </LabDataContext.Provider>
   );
