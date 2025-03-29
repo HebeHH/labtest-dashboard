@@ -5,7 +5,7 @@ import SingleTestChart from './SingleTestChart';
 import MultiTestChart from './MultiTestChart';
 import TestSelector from './TestSelector';
 import ResultsTable from './ResultsTable';
-import labResults from '../data/labData';
+import labResults from '../data/dataImport';
 import { getUniqueTestNames } from '../utils/dataUtils';
 
 const Dashboard: React.FC = () => {

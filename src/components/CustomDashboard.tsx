@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import SingleTestChart from './SingleTestChart';
 import MultiTestChart from './MultiTestChart';
-import labResults from '../data/labData';
+import labResults from '../data/dataImport';
 import { getUniqueTestNames, parseDate } from '../utils/dataUtils';
 import { format } from 'date-fns';
 import Link from 'next/link';

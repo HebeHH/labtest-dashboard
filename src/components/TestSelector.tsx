@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { getTestCategories } from '../utils/dataUtils';
-import labResults from '../data/labData';
+import labResults from '../data/dataImport';
 
 interface TestSelectorProps {
   onSelectTest: (testName: string) => void;

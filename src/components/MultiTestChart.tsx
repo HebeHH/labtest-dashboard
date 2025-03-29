@@ -17,9 +17,9 @@ import {
   formatDate,
   getColorForAcceptability,
   roundToDecimalPlaces,
-  parseDate 
+  parseDate
 } from '../utils/dataUtils';
-import labResults from '../data/labData';
+import labResults from '../data/dataImport';
 import { OutcomeAcceptability } from '../types/labDataTypes';
 import { format } from 'date-fns';
 

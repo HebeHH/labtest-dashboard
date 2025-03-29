@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { getResultsForTest, findTestByName, getColorForAcceptability, roundToDecimalPlaces } from '../utils/dataUtils';
-import labResults from '../data/labData';
+import labResults from '../data/dataImport';
 import { OutcomeAcceptability } from '../types/labDataTypes';
 
 interface ResultsTableProps {
