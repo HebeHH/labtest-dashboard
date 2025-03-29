@@ -1,36 +1,160 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lab Test Dashboard
 
-## Getting Started
+![Lab Test Dashboard](./images/dashboard-main.png)
 
-First, run the development server:
+A modern, interactive dashboard for visualizing and tracking laboratory test results over time. This application helps users monitor their health metrics with intuitive visualizations, trend analysis, and customizable dashboards.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ Features
+
+- **📊 Comprehensive Test Visualization**: View individual test results with clear visual indicators for acceptable ranges.
+- **📈 Multi-Test Comparison**: Compare multiple tests side-by-side to identify correlations.
+- **⚙️ Custom Dashboard Builder**: Create personalized dashboards with the tests that matter most to you.
+- **📅 Date Range Filtering**: Focus on specific time periods to track changes over time.
+- **📱 Responsive Design**: Enjoy a seamless experience across desktop, tablet, and mobile devices.
+- **🎨 Modern UI**: Clean, intuitive interface with subtle colors and professional design.
+- **🔍 Detailed Test Information**: Access comprehensive details about each test, including reference ranges and notes.
+
+## 📸 Screenshots
+
+![Main Dashboard](./images/dashboard-main.png)
+*Main dashboard with test selection and visualizations*
+
+![Custom Dashboard](./images/custom-dashboard.png)
+*Custom dashboard with multiple test visualizations*
+
+![Test Details](./images/test-details.png)
+*Detailed view of individual test results and metadata*
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18.0.0 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/lab-test-dashboard.git
+   cd lab-test-dashboard
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+## 📊 Data Management
+
+### Demo Data vs. Personal Data
+
+This application is designed to work with two types of data:
+
+- **Demo Data**: Sample lab test data included in the repository as JSON files in `public/data/demo/`. This allows you to explore the application without adding your own data.
+- **Personal Data**: Your own lab test results stored as JSON files in `public/data/real/` (not included in the repository for privacy).
+
+### Using Your Own Lab Data
+
+To use your own lab test data:
+
+1. Create a directory `public/data/real/` (if it doesn't exist)
+2. Add your lab data as one or more JSON files in this directory
+3. The application will automatically detect and merge all JSON files from this directory
+4. If no data is found in the `real` directory, the application will fall back to using the demo data
+
+**Note**: The `public/data/real/` directory is included in `.gitignore` to prevent accidental commits of personal health information. Never commit your personal health data to a public repository.
+
+### Data Structure
+
+Your JSON files should follow this structure:
+
+```json
+{
+  "tests": [
+    {
+      "name": "Test Name",
+      "description": "Test description",
+      "target": {
+        "description": "Reference range description",
+        "range": [
+          { "top": 3.9, "value": "Bad" },
+          { "bottom": 3.9, "top": 5.5, "value": "Excellent" },
+          { "bottom": 5.5, "value": "Bad" }
+        ]
+      },
+      "specimenType": "Blood/Urine/etc",
+      "units": "Unit of measurement"
+    },
+    // More tests...
+  ],
+  "results": [
+    {
+      "test": "Test Name",
+      "date": "DD MMM YYYY",
+      "result": {
+        "result": 4.2,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Additional notes",
+      "additionalInfo": "More information"
+    },
+    // More results...
+  ]
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Multiple Data Files
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can split your data across multiple JSON files. For example:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. `test-definitions.json` - Just contains the `tests` array with test definitions
+2. `lab-results-2023.json` - Contains results from 2023
+3. `lab-results-2024.json` - Contains results from 2024
 
-## Learn More
+The application will merge all files found in the directory, combining all tests and results into a single dataset.
 
-To learn more about Next.js, take a look at the following resources:
+## 🧰 Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Next.js**: React framework for server-rendered applications
+- **TypeScript**: Static type checking for JavaScript
+- **Tailwind CSS**: Utility-first CSS framework
+- **Recharts**: Composable charting library built on React components
+- **date-fns**: Modern JavaScript date utility library
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🤝 Contributing
 
-## Deploy on Vercel
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgements
+
+- [Recharts](https://recharts.org/) for the charting library
+- [Tailwind CSS](https://tailwindcss.com/) for the styling framework
+- [Next.js](https://nextjs.org/) for the React framework
+- [date-fns](https://date-fns.org/) for date manipulations
+
+---
+
+Made with ❤️ for better health tracking
