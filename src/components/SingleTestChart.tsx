@@ -28,9 +28,11 @@ import { format } from 'date-fns';
 
 interface SingleTestChartProps {
   testName: string;
+  startDate?: Date | null;
+  endDate?: Date | null;
 }
 
-const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
+const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName, startDate, endDate }) => {
   // Find test and its results
   const test = findTestByName(labResults.tests, testName);
   const results = getResultsForTest(labResults, testName).filter(r => 'resultValid' in r.result && r.result.resultValid);
@@ -44,7 +46,7 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
   }
   
   // Prepare data for the chart
-  const chartData = results
+  let chartData = results
     .map(result => {
       if (!('resultValid' in result.result) || !result.result.resultValid) {
         return null;
@@ -62,6 +64,13 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
     })
     .filter(Boolean)
     .sort((a, b) => a!.date.getTime() - b!.date.getTime());
+    
+  // Filter data by date range if provided
+  if (startDate && endDate) {
+    chartData = chartData.filter(
+      item => item!.date >= startDate && item!.date <= endDate
+    );
+  }
   
   // Find the range values for reference areas
   const ranges = test.target.range.sort((a, b) => {
@@ -76,6 +85,16 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
   
   // Calculate min and max values for the chart
   const values = chartData.map(d => d!.value);
+  
+  // In case we have no values after filtering by date range
+  if (values.length === 0) {
+    return (
+      <div className="p-4 bg-gray-100 rounded-lg text-center">
+        <p>No data available for {testName} in the selected date range</p>
+      </div>
+    );
+  }
+  
   const dataMinValue = Math.min(...values);
   const dataMaxValue = Math.max(...values);
   
@@ -90,6 +109,12 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
       .filter(r => r.top !== undefined)
       .map(r => r.top!)
   );
+  
+  // Determine X-axis domain (time range)
+  let xDomain: Array<number | 'dataMin' | 'dataMax'> = ['dataMin', 'dataMax'];
+  if (startDate && endDate) {
+    xDomain = [startDate.getTime(), endDate.getTime()];
+  }
   
   // Determine the chart min/max values to include both data points and full target ranges
   const padding = 0.1;
@@ -157,9 +182,8 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
   };
   
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 w-full">
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">{test.name}</h3>
+    <div className="p-4">
+      <div className="mb-2">
         <p className="text-sm text-gray-600">{test.description}</p>
         <p className="text-xs text-gray-500 mt-1">{test.target.description}</p>
       </div>
@@ -168,13 +192,13 @@ const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName }) => {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
             <XAxis 
               dataKey="timestamp" 
               type="number"
-              domain={['dataMin', 'dataMax']}
+              domain={startDate && endDate ? [startDate.getTime(), endDate.getTime()] : ['dataMin', 'dataMax']}
               tickFormatter={(timestamp) => format(new Date(timestamp), 'MMM yyyy')}
               tick={{ fontSize: 12 }}
               tickMargin={10}

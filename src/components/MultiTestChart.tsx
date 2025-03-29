@@ -25,6 +25,8 @@ import { format } from 'date-fns';
 
 interface MultiTestChartProps {
   testNames: string[];
+  startDate?: Date | null;
+  endDate?: Date | null;
 }
 
 // Define interfaces for our chart data
@@ -67,7 +69,7 @@ const colors = [
   '#84cc16'  // Lime
 ];
 
-const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames }) => {
+const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames, startDate, endDate }) => {
   if (!testNames || testNames.length === 0) {
     return (
       <div className="p-4 bg-gray-100 rounded-lg text-center">
@@ -91,6 +93,26 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames }) => {
         <p>No valid data available for the selected tests</p>
       </div>
     );
+  }
+  
+  // Filter results by date range if provided
+  if (startDate && endDate) {
+    validTests.forEach(testItem => {
+      testItem.results = testItem.results.filter(
+        r => r.date >= startDate && r.date <= endDate
+      );
+    });
+    
+    // Remove tests that have no results in the selected date range
+    const filteredValidTests = validTests.filter(item => item.results.length > 0);
+    
+    if (filteredValidTests.length === 0) {
+      return (
+        <div className="p-4 bg-gray-100 rounded-lg text-center">
+          <p>No data available for the selected tests in the specified date range</p>
+        </div>
+      );
+    }
   }
   
   // Combine all dates from all tests
@@ -178,13 +200,10 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames }) => {
   };
   
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 w-full">
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">
-          Multiple Tests Comparison
-        </h3>
+    <div className="p-4">
+      <div className="mb-2">
         <p className="text-sm text-gray-600 mt-1">
-          Comparing trends for {validTests.map(t => t.test?.name).join(', ')}
+          Comparing {validTests.map(t => t.test?.name).join(', ')}
         </p>
       </div>
       
@@ -192,13 +211,13 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames }) => {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={sortedData}
-            margin={{ top: 20, right: 60, left: 20, bottom: 10 }}
+            margin={{ top: 5, right: 60, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
             <XAxis 
               dataKey="timestamp" 
               type="number"
-              domain={['dataMin', 'dataMax']}
+              domain={startDate && endDate ? [startDate.getTime(), endDate.getTime()] : ['dataMin', 'dataMax']}
               tickFormatter={(timestamp) => format(new Date(timestamp), 'MMM yyyy')}
               scale="time" 
             />
