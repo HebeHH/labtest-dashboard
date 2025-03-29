@@ -1,5 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
+labData.json
+labDataConstants.ts
+labtest-dashboard/src/data/labData.json
+labtest-dashboard/src/data/labData.ts
+labtest-dashboard/src/data/labDataConstants.ts
+**/labData.*
 # dependencies
 /node_modules
 /.pnp
