@@ -4,6 +4,10 @@
 
 A modern, interactive dashboard for visualizing and tracking laboratory test results over time. This application helps users monitor their health metrics with intuitive visualizations, trend analysis, and customizable dashboards.
 
+## 🌟 Motivation
+
+I created this dashboard because I've accumulated numerous test results from managing my diabetes over the years. Unfortunately, most medical offices don't provide easy access to historical data - test results are typically scattered across individual forms or PDFs, making it difficult to track trends over time. This tool helps consolidate and visualize that data in a meaningful way.
+
 ## ✨ Features
 
 - **📊 Comprehensive Test Visualization**: View individual test results with clear visual indicators for acceptable ranges.
@@ -79,6 +83,16 @@ To use your own lab test data:
 4. If no data is found in the `real` directory, the application will fall back to using the demo data
 
 **Note**: The `public/data/real/` directory is included in `.gitignore` to prevent accidental commits of personal health information. Never commit your personal health data to a public repository.
+
+### Converting Medical Reports to JSON
+
+It's very easy to get your lab data into the required format:
+
+1. Collect your lab test reports (PDFs, images, or even text)
+2. Use ChatGPT or a similar AI tool by uploading your reports and asking it to convert the data to the JSON format specified below
+3. Save the generated JSON to a file in the `public/data/real/` directory
+
+This approach saves you from manually formatting your data and works well with most standard lab reports.
 
 ### Data Structure
 
