@@ -7,6 +7,7 @@ import TestSelector from './TestSelector';
 import ResultsTable from './ResultsTable';
 import labResults from '../data/labData';
 import { getUniqueTestNames } from '../utils/dataUtils';
+import Link from 'next/link';
 
 const Dashboard: React.FC = () => {
   const [selectedTest, setSelectedTest] = useState<string | null>(null);
@@ -45,12 +46,12 @@ const Dashboard: React.FC = () => {
               <span className="px-3 py-1 rounded-full text-sm bg-indigo-100 text-indigo-800 font-medium">
                 Diabetes Monitoring
               </span>
-              <a 
+              <Link 
                 href="/custom-dashboard" 
                 className="px-3 py-1 rounded text-sm bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors"
               >
                 Custom Dashboard
-              </a>
+              </Link>
             </div>
           </div>
         </div>

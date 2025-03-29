@@ -6,6 +6,7 @@ import MultiTestChart from './MultiTestChart';
 import labResults from '../data/labData';
 import { getUniqueTestNames, parseDate } from '../utils/dataUtils';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 // Define graph types
 type GraphType = 'single' | 'multi';
@@ -15,6 +16,7 @@ interface GraphConfig {
   id: string;
   type: GraphType;
   testNames: string[];
+  expanded?: boolean; // Track if the graph is expanded
 }
 
 export const CustomDashboard: React.FC = () => {
@@ -70,20 +72,93 @@ export const CustomDashboard: React.FC = () => {
   
   // Function to move a graph up in the order
   const moveGraphUp = (index: number) => {
-    if (index > 0) {
-      const newGraphs = [...graphs];
-      [newGraphs[index - 1], newGraphs[index]] = [newGraphs[index], newGraphs[index - 1]];
-      setGraphs(newGraphs);
+    if (index <= 0) return; // Can't move up if already at the top
+    
+    const newGraphs = [...graphs];
+    const graphToMove = newGraphs[index];
+    
+    // If the graph is expanded, it should move up by a full row (2 positions or to the top)
+    if (graphToMove.expanded) {
+      // If it's at position 2 or greater, we move it up by 2 positions (one full row)
+      if (index >= 2) {
+        // Remove the graph from its current position
+        newGraphs.splice(index, 1);
+        // Insert it 2 positions up
+        newGraphs.splice(index - 2, 0, graphToMove);
+      } else {
+        // It's at position 1, just move it to the top
+        newGraphs.splice(index, 1);
+        newGraphs.splice(0, 0, graphToMove);
+      }
+    } else {
+      // For a non-expanded graph, check if the one above is expanded
+      const graphAbove = newGraphs[index - 1];
+      
+      if (graphAbove.expanded) {
+        // If the graph above is expanded, we need to move current graph up by one full row
+        // which means above the expanded graph (so index - 2 if available)
+        if (index >= 2) {
+          // Remove the graph from its current position
+          newGraphs.splice(index, 1);
+          // Insert it above the expanded graph
+          newGraphs.splice(index - 2, 0, graphToMove);
+        } else {
+          // Can't move further up, do nothing
+          return;
+        }
+      } else {
+        // Simple swap for non-expanded graphs
+        [newGraphs[index - 1], newGraphs[index]] = [newGraphs[index], newGraphs[index - 1]];
+      }
     }
+    
+    setGraphs(newGraphs);
   };
   
   // Function to move a graph down in the order
   const moveGraphDown = (index: number) => {
-    if (index < graphs.length - 1) {
-      const newGraphs = [...graphs];
-      [newGraphs[index], newGraphs[index + 1]] = [newGraphs[index + 1], newGraphs[index]];
-      setGraphs(newGraphs);
+    if (index >= graphs.length - 1) return; // Can't move down if already at the bottom
+    
+    const newGraphs = [...graphs];
+    const graphToMove = newGraphs[index];
+    
+    // If the graph is expanded, it should move down by a full row (2 positions)
+    if (graphToMove.expanded) {
+      // Check if there's room to move down by 2 positions
+      if (index + 2 < newGraphs.length) {
+        // Remove the graph from its current position
+        newGraphs.splice(index, 1);
+        // Insert it 2 positions down
+        newGraphs.splice(index + 2, 0, graphToMove);
+      } else {
+        // It's close to the bottom, just move it to the end
+        newGraphs.splice(index, 1);
+        newGraphs.push(graphToMove);
+      }
+    } else {
+      // For a non-expanded graph, check if the one below is expanded
+      const graphBelow = newGraphs[index + 1];
+      
+      if (graphBelow.expanded) {
+        // If the graph below is expanded, we need to move current graph down by one full row
+        // which means below the expanded graph
+        if (index + 2 < newGraphs.length) {
+          // Remove the graph from its current position
+          newGraphs.splice(index, 1);
+          // Insert it below the expanded graph
+          newGraphs.splice(index + 2, 0, graphToMove);
+        } else {
+          // It would be at the end, just move it there
+          newGraphs.splice(index, 1);
+          newGraphs.push(graphToMove);
+        }
+      } else {
+        // Simple swap for non-expanded graphs
+        [newGraphs[index], newGraphs[index + 1]] = [newGraphs[index + 1], newGraphs[index]];
+      }
     }
+    
+    setGraphs(newGraphs);
   };
   
   // Function to toggle test selection
@@ -161,6 +236,56 @@ export const CustomDashboard: React.FC = () => {
     setAddGraphCollapsed(!addGraphCollapsed);
   };
   
+  // Function to toggle graph expansion
+  const toggleGraphExpansion = (id: string) => {
+    setGraphs(graphs.map(graph => 
+      graph.id === id ? { ...graph, expanded: !graph.expanded } : graph
+    ));
+  };
+  
+  // Organize graphs into rows, considering expanded state
+  const organizeGraphsIntoRows = () => {
+    const graphsPerRow = 2; // Number of graphs per row when not expanded
+    let rows: GraphConfig[][] = [];
+    let currentRow: GraphConfig[] = [];
+    
+    // Create a copy of graphs to avoid modifying the state directly
+    const graphsCopy = [...graphs];
+    
+    // Organize graphs into rows
+    graphsCopy.forEach((graph, index) => {
+      if (graph.expanded) {
+        // If the current row has items, add it to rows
+        if (currentRow.length > 0) {
+          rows.push([...currentRow]);
+          currentRow = [];
+        }
+        
+        // Add the expanded graph as its own row
+        rows.push([graph]);
+      } else {
+        // Add the graph to the current row
+        currentRow.push(graph);
+        
+        // If the row is full, add it to rows and start a new row
+        if (currentRow.length === graphsPerRow) {
+          rows.push([...currentRow]);
+          currentRow = [];
+        }
+      }
+    });
+    
+    // Add the last row if it has any items
+    if (currentRow.length > 0) {
+      rows.push([...currentRow]);
+    }
+    
+    return rows;
+  };
+  
+  // Get the organized rows
+  const graphRows = organizeGraphsIntoRows();
+  
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
       <header className="bg-white shadow-sm mb-6">
@@ -171,12 +296,12 @@ export const CustomDashboard: React.FC = () => {
                 Custom Dashboard
               </span>
             </h1>
-            <a 
+            <Link 
               href="/" 
               className="px-3 py-1 rounded text-sm bg-indigo-100 text-indigo-800 font-medium hover:bg-indigo-200 transition-colors"
             >
               Back to Main Dashboard
-            </a>
+            </Link>
           </div>
         </div>
       </header>
@@ -322,67 +447,93 @@ export const CustomDashboard: React.FC = () => {
           )}
         </div>
         
-        {/* Graphs Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {graphs.map((graph, index) => (
-            <div key={graph.id} className="bg-white rounded-xl shadow-md relative">
-              <div className="flex justify-between items-center p-4 border-b border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {graph.type === 'single' 
-                    ? `${graph.testNames[0]}`
-                    : `Multiple Tests (${graph.testNames.length})`}
-                </h3>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => moveGraphUp(index)}
-                    disabled={index === 0}
-                    className="p-1 text-gray-500 hover:text-gray-700 disabled:text-gray-300"
-                    title="Move Up"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => moveGraphDown(index)}
-                    disabled={index === graphs.length - 1}
-                    className="p-1 text-gray-500 hover:text-gray-700 disabled:text-gray-300"
-                    title="Move Down"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => removeGraph(graph.id)}
-                    className="p-1 text-red-500 hover:text-red-700"
-                    title="Remove"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </div>
+        {/* Graphs Layout - Organized by Rows */}
+        {graphRows.length > 0 ? (
+          <div className="space-y-6">
+            {graphRows.map((row, rowIndex) => (
+              <div key={`row-${rowIndex}`} className={`grid ${row.length === 1 && row[0].expanded ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'} gap-6`}>
+                {row.map(graph => {
+                  const isExpanded = graph.expanded;
+                  
+                  return (
+                    <div 
+                      key={graph.id}
+                      className={`bg-white rounded-xl shadow-md relative ${isExpanded ? 'col-span-full' : ''}`}
+                    >
+                      <div className="flex justify-between items-center p-4 border-b border-gray-100">
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          {graph.type === 'single' 
+                            ? `${graph.testNames[0]}`
+                            : `Multiple Tests (${graph.testNames.length})`}
+                        </h3>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => toggleGraphExpansion(graph.id)}
+                            className="p-1 text-indigo-500 hover:text-indigo-700"
+                            title={isExpanded ? "Shrink" : "Expand"}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              {isExpanded ? (
+                                <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" />
+                              ) : (
+                                <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+                              )}
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => moveGraphUp(graphs.findIndex(g => g.id === graph.id))}
+                            disabled={graphs.findIndex(g => g.id === graph.id) === 0}
+                            className="p-1 text-gray-500 hover:text-gray-700 disabled:text-gray-300"
+                            title="Move Up"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => moveGraphDown(graphs.findIndex(g => g.id === graph.id))}
+                            disabled={graphs.findIndex(g => g.id === graph.id) === graphs.length - 1}
+                            className="p-1 text-gray-500 hover:text-gray-700 disabled:text-gray-300"
+                            title="Move Down"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => removeGraph(graph.id)}
+                            className="p-1 text-red-500 hover:text-red-700"
+                            title="Remove"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className={isExpanded ? 'h-[500px]' : 'h-auto'}>
+                        {graph.type === 'single' ? (
+                          <SingleTestChart 
+                            testName={graph.testNames[0]} 
+                            startDate={calculatedStartDate}
+                            endDate={calculatedEndDate}
+                          />
+                        ) : (
+                          <MultiTestChart 
+                            testNames={graph.testNames} 
+                            startDate={calculatedStartDate}
+                            endDate={calculatedEndDate}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-              
-              {graph.type === 'single' ? (
-                <SingleTestChart 
-                  testName={graph.testNames[0]} 
-                  startDate={calculatedStartDate}
-                  endDate={calculatedEndDate}
-                />
-              ) : (
-                <MultiTestChart 
-                  testNames={graph.testNames} 
-                  startDate={calculatedStartDate}
-                  endDate={calculatedEndDate}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-        
-        {graphs.length === 0 && (
+            ))}
+          </div>
+        ) : (
           <div className="bg-white rounded-xl shadow-md p-12 text-center">
             <p className="text-gray-500">
               No graphs added yet. Use the controls above to add graphs to your dashboard.
