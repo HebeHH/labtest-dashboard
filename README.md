@@ -1,6 +1,6 @@
 # Lab Test Dashboard
 
-![Lab Test Dashboard](./images/dashboard-main.png)
+![Lab Test Dashboard](./images/MainDashboard.png)
 
 A modern, interactive dashboard for visualizing and tracking laboratory test results over time. This application helps users monitor their health metrics with intuitive visualizations, trend analysis, and customizable dashboards.
 
@@ -16,14 +16,18 @@ A modern, interactive dashboard for visualizing and tracking laboratory test res
 
 ## 📸 Screenshots
 
-![Main Dashboard](./images/dashboard-main.png)
+![Main Dashboard](./images/MainDashboard.png)
 *Main dashboard with test selection and visualizations*
 
-![Custom Dashboard](./images/custom-dashboard.png)
+![Test Details](./images/DetailView.png)
+*Detailed view of individual test results and metadata*
+
+![Custom Dashboard](./images/CustomDashboard.png)
 *Custom dashboard with multiple test visualizations*
 
-![Test Details](./images/test-details.png)
-*Detailed view of individual test results and metadata*
+![Custom Dashboard](./images/MultiGraphs3.png)
+*Display your choice of graphs in the custom dashboard*
+
 
 ## 🚀 Getting Started
 
@@ -63,14 +67,14 @@ A modern, interactive dashboard for visualizing and tracking laboratory test res
 This application is designed to work with two types of data:
 
 - **Demo Data**: Sample lab test data included in the repository as JSON files in `public/data/demo/`. This allows you to explore the application without adding your own data.
-- **Personal Data**: Your own lab test results stored as JSON files in `public/data/real/` (not included in the repository for privacy).
+- **Personal Data**: Your own lab test results stored as JSON files in `public/data/real/` (in the gitignore file, for privacy).
 
 ### Using Your Own Lab Data
 
 To use your own lab test data:
 
 1. Create a directory `public/data/real/` (if it doesn't exist)
-2. Add your lab data as one or more JSON files in this directory
+2. Add your lab data as one or more JSON files in this directory. Make sure to follow the data structure below.
 3. The application will automatically detect and merge all JSON files from this directory
 4. If no data is found in the `real` directory, the application will fall back to using the demo data
 
