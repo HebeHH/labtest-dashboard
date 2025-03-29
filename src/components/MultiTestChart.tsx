@@ -19,12 +19,12 @@ import {
   roundToDecimalPlaces,
   parseDate
 } from '../utils/dataUtils';
-import labResults from '../data/dataImport';
-import { OutcomeAcceptability } from '../types/labDataTypes';
+import { OutcomeAcceptability, AllResults } from '../types/labDataTypes';
 import { format } from 'date-fns';
 
 interface MultiTestChartProps {
   testNames: string[];
+  labData: AllResults;
   startDate?: Date | null;
   endDate?: Date | null;
 }
@@ -69,7 +69,7 @@ const colors = [
   '#84cc16'  // Lime
 ];
 
-const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames, startDate, endDate }) => {
+const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames, labData, startDate, endDate }) => {
   if (!testNames || testNames.length === 0) {
     return (
       <div className="p-4 bg-gray-100 rounded-lg text-center">
@@ -82,8 +82,8 @@ const MultiTestChart: React.FC<MultiTestChartProps> = ({ testNames, startDate, e
   const validTests = testNames
     .map(name => ({
       name,
-      test: findTestByName(labResults.tests, name),
-      results: getValidResultsWithDates(labResults, name)
+      test: findTestByName(labData.tests, name),
+      results: getValidResultsWithDates(labData, name)
     }))
     .filter(item => item.test && item.results.length > 0);
   

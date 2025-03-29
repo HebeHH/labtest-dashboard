@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import SingleTestChart from './SingleTestChart';
 import MultiTestChart from './MultiTestChart';
-import labResults from '../data/dataImport';
 import { getUniqueTestNames, parseDate } from '../utils/dataUtils';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import { AllResults } from '../types/labDataTypes';
 
 // Define graph types
 type GraphType = 'single' | 'multi';
@@ -19,7 +19,11 @@ interface GraphConfig {
   expanded?: boolean; // Track if the graph is expanded
 }
 
-export const CustomDashboard: React.FC = () => {
+interface CustomDashboardProps {
+  labData: AllResults;
+}
+
+const CustomDashboard: React.FC<CustomDashboardProps> = ({ labData }) => {
   // State for collapsible sections
   const [dateRangeCollapsed, setDateRangeCollapsed] = useState<boolean>(false);
   const [addGraphCollapsed, setAddGraphCollapsed] = useState<boolean>(false);
@@ -38,7 +42,7 @@ export const CustomDashboard: React.FC = () => {
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
   
   // Get all available test names
-  const availableTests = getUniqueTestNames(labResults);
+  const availableTests = getUniqueTestNames(labData);
   
   // Function to add a new graph
   const addGraph = () => {
@@ -189,7 +193,7 @@ export const CustomDashboard: React.FC = () => {
     const allDates: Date[] = [];
     
     allTestNames.forEach(testName => {
-      const testResults = labResults.results.filter(r => r.test === testName && 'resultValid' in r.result && r.result.resultValid);
+      const testResults = labData.results.filter(r => r.test === testName && 'resultValid' in r.result && r.result.resultValid);
       testResults.forEach(result => {
         allDates.push(parseDate(result.date));
       });
@@ -210,7 +214,7 @@ export const CustomDashboard: React.FC = () => {
       setStartDate(format(minDate, 'yyyy-MM-dd'));
       setEndDate(format(maxDate, 'yyyy-MM-dd'));
     }
-  }, [graphs]);
+  }, [graphs, labData.results]);
   
   // Handle manual date range changes
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -559,12 +563,14 @@ export const CustomDashboard: React.FC = () => {
                           testName={graph.testNames[0]} 
                           startDate={calculatedStartDate}
                           endDate={calculatedEndDate}
+                          labData={labData}
                         />
                       ) : (
                         <MultiTestChart 
                           testNames={graph.testNames} 
                           startDate={calculatedStartDate}
                           endDate={calculatedEndDate}
+                          labData={labData}
                         />
                       )}
                     </div>

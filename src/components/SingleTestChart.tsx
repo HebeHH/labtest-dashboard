@@ -13,7 +13,7 @@ import {
   ReferenceArea,
   Legend
 } from 'recharts';
-import { Test, TestResult } from '../types/labDataTypes';
+import { Test, TestResult, AllResults } from '../types/labDataTypes';
 import { 
   getResultsForTest, 
   findTestByName, 
@@ -23,19 +23,19 @@ import {
   formatDate,
   roundToDecimalPlaces
 } from '../utils/dataUtils';
-import labResults from '../data/dataImport';
 import { format } from 'date-fns';
 
 interface SingleTestChartProps {
   testName: string;
+  labData: AllResults;
   startDate?: Date | null;
   endDate?: Date | null;
 }
 
-const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName, startDate, endDate }) => {
+const SingleTestChart: React.FC<SingleTestChartProps> = ({ testName, labData, startDate, endDate }) => {
   // Find test and its results
-  const test = findTestByName(labResults.tests, testName);
-  const results = getResultsForTest(labResults, testName).filter(r => 'resultValid' in r.result && r.result.resultValid);
+  const test = findTestByName(labData.tests, testName);
+  const results = getResultsForTest(labData, testName).filter(r => 'resultValid' in r.result && r.result.resultValid);
   
   if (!test || results.length === 0) {
     return (

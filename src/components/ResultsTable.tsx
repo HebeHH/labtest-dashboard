@@ -2,16 +2,16 @@
 
 import React from 'react';
 import { getResultsForTest, findTestByName, getColorForAcceptability, roundToDecimalPlaces } from '../utils/dataUtils';
-import labResults from '../data/dataImport';
-import { OutcomeAcceptability } from '../types/labDataTypes';
+import { OutcomeAcceptability, AllResults } from '../types/labDataTypes';
 
 interface ResultsTableProps {
   testName: string;
+  labData: AllResults;
 }
 
-const ResultsTable: React.FC<ResultsTableProps> = ({ testName }) => {
-  const test = findTestByName(labResults.tests, testName);
-  const results = getResultsForTest(labResults, testName)
+const ResultsTable: React.FC<ResultsTableProps> = ({ testName, labData }) => {
+  const test = findTestByName(labData.tests, testName);
+  const results = getResultsForTest(labData, testName)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   if (!test || results.length === 0) {

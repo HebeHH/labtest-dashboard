@@ -1,0 +1,103 @@
+{
+  "tests": [
+    {
+      "name": "Vitamin D, 25-Hydroxy",
+      "description": "Measures vitamin D levels to assess bone health and immune function.",
+      "target": {
+        "description": "Reference ranges for vitamin D based on clinical guidelines for optimal health.",
+        "range": [
+          {
+            "top": 50,
+            "value": "Bad"
+          },
+          {
+            "bottom": 50,
+            "top": 75,
+            "value": "Acceptable"
+          },
+          {
+            "bottom": 75,
+            "top": 125,
+            "value": "Excellent"
+          },
+          {
+            "bottom": 125,
+            "value": "Bad"
+          }
+        ]
+      },
+      "specimenType": "Blood",
+      "units": "NMOL/L"
+    },
+    {
+      "name": "Iron",
+      "description": "Measures the amount of iron in the blood. Important for assessing anemia and iron overload conditions.",
+      "target": {
+        "description": "Reference ranges for serum iron based on hematology guidelines.",
+        "range": [
+          {
+            "top": 11.0,
+            "value": "Bad"
+          },
+          {
+            "bottom": 11.0,
+            "top": 30.0,
+            "value": "Excellent"
+          },
+          {
+            "bottom": 30.0,
+            "value": "Bad"
+          }
+        ]
+      },
+      "specimenType": "Blood",
+      "units": "UMOL/L"
+    }
+  ],
+  "results": [
+    {
+      "test": "Vitamin D, 25-Hydroxy",
+      "date": "12 Jun 2025",
+      "result": {
+        "result": 85,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Optimal vitamin D level",
+      "additionalInfo": "Continue current supplementation"
+    },
+    {
+      "test": "Vitamin D, 25-Hydroxy",
+      "date": "15 Dec 2024",
+      "result": {
+        "result": 45,
+        "resultValid": true,
+        "resultAcceptability": "Bad"
+      },
+      "resultNotes": "Insufficient vitamin D",
+      "additionalInfo": "Consider vitamin D supplementation"
+    },
+    {
+      "test": "Iron",
+      "date": "12 Jun 2025",
+      "result": {
+        "result": 18.5,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Normal iron levels",
+      "additionalInfo": "No action required"
+    },
+    {
+      "test": "Iron",
+      "date": "15 Dec 2024",
+      "result": {
+        "result": 10.2,
+        "resultValid": true,
+        "resultAcceptability": "Bad"
+      },
+      "resultNotes": "Low iron level",
+      "additionalInfo": "Consider iron supplementation and dietary changes"
+    }
+  ]
+} 

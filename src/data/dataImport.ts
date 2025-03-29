@@ -1,27 +1,19 @@
 import { AllResults } from '../types/labDataTypes';
-import demoLabResults from './demoLabData';
+import { loadLabData } from '../utils/dataLoader';
 
-// Default to using demo data
-let labResults: AllResults = demoLabResults;
+// Default to empty data structure
+let labResults: AllResults = { tests: [], results: [] };
 
-// Try to dynamically load the actual lab data if it exists
-// This approach uses an async import with a try/catch,
-// but initializes with demo data for immediate use
-const loadActualData = async () => {
+// Load data immediately
+(async function() {
   try {
-    // Using dynamic import to handle the case where the file might not exist
-    const actualData = await import('./labData');
-    if (actualData.default) {
-      labResults = actualData.default;
-      console.log('Using actual lab data');
-    }
+    const data = await loadLabData();
+    
+    // Update the labResults with the loaded data
+    labResults = data;
   } catch (error) {
-    console.log('Lab data file not found, using demo data instead');
+    console.error('Error loading lab data:', error);
   }
-};
-
-// Try to load the actual data, but the app will use demo data
-// until the actual data is loaded (if it exists)
-loadActualData();
+})();
 
 export default labResults; 

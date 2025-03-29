@@ -2,18 +2,19 @@
 
 import React, { useState } from 'react';
 import { getTestCategories } from '../utils/dataUtils';
-import labResults from '../data/dataImport';
+import { AllResults } from '../types/labDataTypes';
 
 interface TestSelectorProps {
   onSelectTest: (testName: string) => void;
   onSelectMultiTests: (testNames: string[]) => void;
+  labData: AllResults;
 }
 
-const TestSelector: React.FC<TestSelectorProps> = ({ onSelectTest, onSelectMultiTests }) => {
+const TestSelector: React.FC<TestSelectorProps> = ({ onSelectTest, onSelectMultiTests, labData }) => {
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   
-  const categories = getTestCategories(labResults);
+  const categories = getTestCategories(labData);
   
   const handleTestToggle = (testName: string) => {
     if (selectedTests.includes(testName)) {
@@ -73,7 +74,7 @@ const TestSelector: React.FC<TestSelectorProps> = ({ onSelectTest, onSelectMulti
               {expandedCategories[category] && (
                 <div className="p-4 space-y-3">
                   {tests.map(testName => {
-                    const test = labResults.tests.find(t => t.name === testName);
+                    const test = labData.tests.find(t => t.name === testName);
                     return (
                       <div key={testName} className="flex items-start pb-3 border-b border-blue-50 last:border-0">
                         <div className="flex items-center h-5">

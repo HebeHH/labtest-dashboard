@@ -5,6 +5,10 @@ labtest-dashboard/src/data/labData.json
 labtest-dashboard/src/data/labData.ts
 labtest-dashboard/src/data/labDataConstants.ts
 **/labData.*
+
+# Don't include real user data
+public/data/real/
+
 # dependencies
 /node_modules
 /.pnp

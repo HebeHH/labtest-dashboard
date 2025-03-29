@@ -5,16 +5,24 @@ import SingleTestChart from './SingleTestChart';
 import MultiTestChart from './MultiTestChart';
 import TestSelector from './TestSelector';
 import ResultsTable from './ResultsTable';
-import labResults from '../data/dataImport';
 import { getUniqueTestNames } from '../utils/dataUtils';
+import { AllResults, Test, TestResult } from '../types/labDataTypes';
 
-const Dashboard: React.FC = () => {
+interface DashboardProps {
+  tests: Test[];
+  results: TestResult[];
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ tests, results }) => {
   const [selectedTest, setSelectedTest] = useState<string | null>(null);
   const [multiTestNames, setMultiTestNames] = useState<string[]>([]);
   const [displayMode, setDisplayMode] = useState<'single' | 'multi'>('single');
   
+  // Use the lab data from props
+  const labData: AllResults = { tests, results };
+  
   // Get default test if none selected (use HBA1c if available)
-  const availableTests = getUniqueTestNames(labResults);
+  const availableTests = getUniqueTestNames(labData);
   
   const defaultTest = availableTests.find(name => name.includes('HBA1c')) || availableTests[0];
   
@@ -50,6 +58,7 @@ const Dashboard: React.FC = () => {
           <TestSelector
             onSelectTest={handleSingleTestSelect}
             onSelectMultiTests={handleMultiTestSelect}
+            labData={labData}
           />
         </div>
         
@@ -67,11 +76,11 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="p-6">
               {displayMode === 'single' && currentTest && (
-                <SingleTestChart testName={currentTest} />
+                <SingleTestChart testName={currentTest} labData={labData} />
               )}
               
               {displayMode === 'multi' && multiTestNames.length > 0 && (
-                <MultiTestChart testNames={multiTestNames} />
+                <MultiTestChart testNames={multiTestNames} labData={labData} />
               )}
             </div>
           </div>
@@ -85,7 +94,7 @@ const Dashboard: React.FC = () => {
                 </h2>
               </div>
               <div className="p-6">
-                <ResultsTable testName={currentTest} />
+                <ResultsTable testName={currentTest} labData={labData} />
               </div>
             </div>
           )}
