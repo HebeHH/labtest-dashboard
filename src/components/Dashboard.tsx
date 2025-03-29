@@ -43,9 +43,6 @@ const Dashboard: React.FC = () => {
               </span>
             </h1>
             <div className="flex items-center space-x-4">
-              <span className="px-3 py-1 rounded-full text-sm bg-indigo-100 text-indigo-800 font-medium">
-                Diabetes Monitoring
-              </span>
               <Link 
                 href="/custom-dashboard" 
                 className="px-3 py-1 rounded text-sm bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors"
