@@ -69,7 +69,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tests, results }) => {
             <div className="border-b border-blue-50 px-6 py-4">
               <h2 className="text-xl font-semibold text-gray-800">
                 {displayMode === 'single' 
-                  ? 'Test Results Over Time'
+                  ? `Test Results Over Time: ${currentTest}`
                   : 'Multiple Test Comparison'
                 }
               </h2>
