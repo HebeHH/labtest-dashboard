@@ -73,6 +73,33 @@ This application is designed to work with two types of data:
 - **Demo Data**: Sample lab test data included in the repository as JSON files in `public/data/demo/`. This allows you to explore the application without adding your own data.
 - **Personal Data**: Your own lab test results stored as JSON files in `public/data/real/` (in the gitignore file, for privacy).
 
+### Important: Using Index Files
+
+The application uses `index.json` files in both the demo and real data directories to determine which data files to load. This approach provides several benefits:
+
+1. **File Discovery**: The application only loads files listed in the index, ignoring any temporary or backup files
+2. **Loading Order**: Files are loaded in the order they appear in the index
+3. **Selective Loading**: You can temporarily disable files by removing them from the index without deleting them
+
+#### How to Use Index Files
+
+Each data directory (`public/data/demo/` and `public/data/real/`) contains an `index.json` file that lists the data files to load:
+
+```json
+["file1.json", "file2.json", "file3.json"]
+```
+
+**Important Notes:**
+- When adding new data files, you MUST update the corresponding `index.json` file to include them
+- The `real/index.json` file is tracked by git (but NOT the actual data files)
+- Any changes to the structure of your data files should be reflected in the index
+
+#### Git Behavior for Data Files
+
+- `public/data/real/index.json` is tracked by git, allowing for version control of the file list
+- All other files in the `public/data/real/` directory are ignored by git (via .gitignore) to protect your privacy
+- All files in the `public/data/demo/` directory are tracked by git to provide sample data for users
+
 ### Using Your Own Lab Data
 
 To use your own lab test data:
