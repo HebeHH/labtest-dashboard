@@ -7,7 +7,8 @@ labtest-dashboard/src/data/labDataConstants.ts
 **/labData.*
 
 # Don't include real user data
-public/data/real/
+public/data/real/*
+!public/data/real/index.json
 
 # dependencies
 /node_modules
