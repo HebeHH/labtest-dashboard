@@ -7,7 +7,7 @@ import { AllResults } from '../types/labDataTypes';
  * 3. Always load from index.json files
  * 4. Merge data from multiple files if present
  */
-export async function loadLabData(): Promise<AllResults> {
+export async function loadLabData(): Promise<{ data: AllResults; isDemo: boolean }> {
   try {
     // Initialize with empty arrays
     const mergedData: AllResults = {
@@ -47,7 +47,7 @@ export async function loadLabData(): Promise<AllResults> {
         if (mergedData.tests.length > 0 || mergedData.results.length > 0) {
           console.log('Real data loaded successfully:', 
             `${mergedData.tests.length} tests, ${mergedData.results.length} results`);
-          return mergedData;
+          return { data: mergedData, isDemo: false };
         }
       }
     }
@@ -85,15 +85,15 @@ export async function loadLabData(): Promise<AllResults> {
     if (mergedData.tests.length > 0 || mergedData.results.length > 0) {
       console.log('Demo data loaded successfully:', 
         `${mergedData.tests.length} tests, ${mergedData.results.length} results`);
-      return mergedData;
+      return { data: mergedData, isDemo: true };
     }
     
     // If no data is found, return an empty dataset
     console.error('No lab data found in either real or demo files');
-    return { tests: [], results: [] };
+    return { data: { tests: [], results: [] }, isDemo: true };
   } catch (error) {
     console.error('Error in loadLabData:', error);
-    return { tests: [], results: [] };
+    return { data: { tests: [], results: [] }, isDemo: true };
   }
 }
 

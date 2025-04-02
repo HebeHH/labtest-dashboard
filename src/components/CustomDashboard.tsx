@@ -7,6 +7,7 @@ import { getUniqueTestNames, parseDate } from '../utils/dataUtils';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { AllResults } from '../types/labDataTypes';
+import { useLabData } from '../contexts/LabDataContext';
 
 // Define graph types
 type GraphType = 'single' | 'multi';
@@ -40,6 +41,9 @@ const CustomDashboard: React.FC<CustomDashboardProps> = ({ labData }) => {
   // State for adding new graphs
   const [graphType, setGraphType] = useState<GraphType>('single');
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
+  
+  // Access the lab data context to check if we're using demo data
+  const { isDemo } = useLabData();
   
   // Get all available test names
   const availableTests = getUniqueTestNames(labData);
@@ -302,6 +306,27 @@ const CustomDashboard: React.FC<CustomDashboardProps> = ({ labData }) => {
           Create your personalized dashboard with the tests that matter most to you
         </p>
       </div>
+      
+      {/* Demo Data Indicator */}
+      {isDemo && (
+        <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-md">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-amber-800">Demo Data</h3>
+              <div className="mt-1 text-sm text-amber-700">
+                <p>
+                  You are currently viewing sample demonstration data. These values do not represent real patient data.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Date Range Controls */}
       <div className="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden mb-6">

@@ -9,6 +9,7 @@ type LabDataContextType = {
   labData: AllResults;
   isLoading: boolean;
   error: string | null;
+  isDemo: boolean;
   refetch: () => Promise<void>;
 };
 
@@ -17,6 +18,7 @@ const LabDataContext = createContext<LabDataContextType>({
   labData: { tests: [], results: [] },
   isLoading: true,
   error: null,
+  isDemo: false,
   refetch: async () => {},
 });
 
@@ -28,6 +30,7 @@ export const LabDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [labData, setLabData] = useState<AllResults>({ tests: [], results: [] });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDemo, setIsDemo] = useState(false);
 
   const fetchData = async () => {
     console.log('Fetching lab data...');
@@ -35,7 +38,8 @@ export const LabDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setError(null);
     
     try {
-      const data = await loadLabData();
+      const response = await loadLabData();
+      const data = response.data;
       
       if (!data || (!data.tests?.length && !data.results?.length)) {
         console.error('No data received from loadLabData');
@@ -43,6 +47,7 @@ export const LabDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
       } else {
         console.log(`Successfully loaded data: ${data.tests.length} tests, ${data.results.length} results`);
         setLabData(data);
+        setIsDemo(response.isDemo);
       }
     } catch (err) {
       console.error('Error loading lab data:', err);
@@ -58,7 +63,7 @@ export const LabDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, []);
 
   return (
-    <LabDataContext.Provider value={{ labData, isLoading, error, refetch: fetchData }}>
+    <LabDataContext.Provider value={{ labData, isLoading, error, isDemo, refetch: fetchData }}>
       {children}
     </LabDataContext.Provider>
   );

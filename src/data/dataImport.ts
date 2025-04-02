@@ -7,10 +7,10 @@ let labResults: AllResults = { tests: [], results: [] };
 // Load data immediately
 (async function() {
   try {
-    const data = await loadLabData();
+    const response = await loadLabData();
     
     // Update the labResults with the loaded data
-    labResults = data;
+    labResults = response.data;
   } catch (error) {
     console.error('Error loading lab data:', error);
   }
