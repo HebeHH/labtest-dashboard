@@ -1,0 +1,263 @@
+{
+  "tests": [
+    {
+      "name": "Glucose, Fasting",
+      "description": "Measures blood sugar levels after fasting for at least 8 hours. Used to diagnose and monitor diabetes.",
+      "target": {
+        "description": "Reference ranges for fasting glucose based on clinical guidelines.",
+        "range": [
+          {
+            "top": 3.9,
+            "value": "Bad"
+          },
+          {
+            "bottom": 3.9,
+            "top": 5.5,
+            "value": "Excellent"
+          },
+          {
+            "bottom": 5.5,
+            "top": 7.0,
+            "value": "Acceptable"
+          },
+          {
+            "bottom": 7.0,
+            "value": "Bad"
+          }
+        ]
+      },
+      "specimenType": "Blood",
+      "units": "MMOL/L"
+    },
+    {
+      "name": "Hemoglobin A1c",
+      "description": "Measures average blood glucose levels over the past 2-3 months. Primary test for diabetes management.",
+      "target": {
+        "description": "Target ranges for HbA1c based on diabetes management guidelines.",
+        "range": [
+          {
+            "top": 5.7,
+            "value": "Excellent"
+          },
+          {
+            "bottom": 5.7,
+            "top": 6.4,
+            "value": "Acceptable"
+          },
+          {
+            "bottom": 6.4,
+            "value": "Bad"
+          }
+        ]
+      },
+      "specimenType": "Blood",
+      "units": "%"
+    },
+    {
+      "name": "Total Cholesterol",
+      "description": "Measures all types of cholesterol in the blood. Important for assessing cardiovascular risk.",
+      "target": {
+        "description": "Reference ranges for total cholesterol based on cardiovascular health guidelines.",
+        "range": [
+          {
+            "top": 5.2,
+            "value": "Excellent"
+          },
+          {
+            "bottom": 5.2,
+            "top": 6.2,
+            "value": "Acceptable"
+          },
+          {
+            "bottom": 6.2,
+            "value": "Bad"
+          }
+        ]
+      },
+      "specimenType": "Blood",
+      "units": "MMOL/L"
+    },
+    {
+      "name": "HDL Cholesterol",
+      "description": "High-density lipoprotein cholesterol, often called 'good' cholesterol, helps remove other forms of cholesterol from the bloodstream.",
+      "target": {
+        "description": "Reference ranges for HDL cholesterol based on cardiovascular health guidelines.",
+        "range": [
+          {
+            "top": 1.0,
+            "value": "Bad"
+          },
+          {
+            "bottom": 1.0,
+            "top": 1.5,
+            "value": "Acceptable"
+          },
+          {
+            "bottom": 1.5,
+            "value": "Excellent"
+          }
+        ]
+      },
+      "specimenType": "Blood",
+      "units": "MMOL/L"
+    },
+    {
+      "name": "LDL Cholesterol",
+      "description": "Low-density lipoprotein cholesterol, often called 'bad' cholesterol, can build up in arteries and increase risk of heart disease.",
+      "target": {
+        "description": "Reference ranges for LDL cholesterol based on cardiovascular health guidelines.",
+        "range": [
+          {
+            "top": 2.6,
+            "value": "Excellent"
+          },
+          {
+            "bottom": 2.6,
+            "top": 3.3,
+            "value": "Acceptable"
+          },
+          {
+            "bottom": 3.3,
+            "value": "Bad"
+          }
+        ]
+      },
+      "specimenType": "Blood",
+      "units": "MMOL/L"
+    }
+  ],
+  "results": [
+    {
+      "test": "Glucose, Fasting",
+      "date": "12 Jun 2024",
+      "result": {
+        "result": 5.2,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Fasting sample taken after 10 hours",
+      "additionalInfo": "Results within normal range"
+    },
+    {
+      "test": "Glucose, Fasting",
+      "date": "10 Mar 2025",
+      "result": {
+        "result": 5.8,
+        "resultValid": true,
+        "resultAcceptability": "Acceptable"
+      },
+      "resultNotes": "Patient reported 8 hour fast",
+      "additionalInfo": "Trending higher than previous results"
+    },
+    {
+      "test": "Glucose, Fasting",
+      "date": "11 Jan 2025",
+      "result": {
+        "result": 6.3,
+        "resultValid": true,
+        "resultAcceptability": "Bad"
+      },
+      "resultNotes": "Patient reported 8 hour fast",
+      "additionalInfo": "Trending higher than previous results"
+    },
+    {
+      "test": "Glucose, Fasting",
+      "date": "15 Dec 2024",
+      "result": {
+        "result": 5.3,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Proper fasting confirmed",
+      "additionalInfo": "Within target range"
+    },
+    {
+      "test": "Hemoglobin A1c",
+      "date": "12 Jun 2025",
+      "result": {
+        "result": 5.4,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Excellent glycemic control",
+      "additionalInfo": "Continue current management"
+    },
+    {
+      "test": "Hemoglobin A1c",
+      "date": "10 Mar 2025",
+      "result": {
+        "result": 5.8,
+        "resultValid": true,
+        "resultAcceptability": "Acceptable"
+      },
+      "resultNotes": "Slightly elevated",
+      "additionalInfo": "Consider dietary and lifestyle assessment"
+    },
+    {
+      "test": "Total Cholesterol",
+      "date": "12 Jun 2025",
+      "result": {
+        "result": 4.8,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Within target range",
+      "additionalInfo": "Good cardiovascular risk profile"
+    },
+    {
+      "test": "Total Cholesterol",
+      "date": "15 Dec 2024",
+      "result": {
+        "result": 5.5,
+        "resultValid": true,
+        "resultAcceptability": "Acceptable"
+      },
+      "resultNotes": "Slightly elevated",
+      "additionalInfo": "Consider dietary changes"
+    },
+    {
+      "test": "Total Cholesterol",
+      "date": "15 Mar 2024",
+      "result": {
+        "result": 5.7,
+        "resultValid": true,
+        "resultAcceptability": "Acceptable"
+      },
+      "resultNotes": "Slightly elevated",
+      "additionalInfo": "Consider dietary changes"
+    },
+    {
+      "test": "Total Cholesterol",
+      "date": "15 Jan 2024",
+      "result": {
+        "result": 5.1,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Slightly elevated",
+      "additionalInfo": "Consider dietary changes"
+    },
+    {
+      "test": "HDL Cholesterol",
+      "date": "12 Jun 2025",
+      "result": {
+        "result": 1.8,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Excellent HDL level",
+      "additionalInfo": "Continue current healthy habits"
+    },
+    {
+      "test": "LDL Cholesterol",
+      "date": "12 Jun 2025",
+      "result": {
+        "result": 2.5,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Within optimal range",
+      "additionalInfo": "Low cardiovascular risk"
+    }
+  ]
+} 
