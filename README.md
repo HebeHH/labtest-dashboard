@@ -161,6 +161,24 @@ Your JSON files should follow this structure:
 }
 ```
 
+### Test Categorization
+
+The dashboard automatically organizes lab tests into logical categories based on their names. Tests are categorized into groups like:
+
+- **Diabetes**: HbA1c, glucose, insulin, etc.
+- **Lipids**: Cholesterol, triglycerides, lipoproteins, etc.
+- **Kidney**: Creatinine, eGFR, albumin, etc.
+- **Thyroid**: TSH, T3, T4, etc.
+- **Liver**: Transaminases, bilirubin, etc.
+- **Blood Count**: Hemoglobin, platelets, WBC, etc.
+- **Electrolytes**: Sodium, potassium, calcium, etc.
+- **Iron**: Ferritin, transferrin, etc.
+- **Inflammation**: CRP, ESR, etc.
+- **Vitamins**: B12, folate, vitamin D, etc.
+- **Hormones**: Testosterone, estrogen, cortisol, etc.
+
+This categorization makes it easier to find related tests and helps organize the dashboard interface. Any tests that don't match known categories are placed in an "Other" category.
+
 ### Multiple Data Files
 
 You can split your data across multiple JSON files. For example:

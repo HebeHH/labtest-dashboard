@@ -119,31 +119,50 @@ export const getValidResultsWithDates = (data: AllResults, testName: string): Ar
 /**
  * Gets all test categories (grouped by related tests)
  */
+// Map of categories to keywords that should match tests in that category
+export const testCategoryMap: Record<string, string[]> = {
+  'Diabetes': ['hba1c', 'glucose', 'insulin', 'fructosamine', 'c-peptide', 'diabetes'],
+  'Lipids': ['cholesterol', 'triglyceride', 'lipoprotein', 'apob', 'apolipoprotein'],
+  'Kidney': ['creatinine', 'egfr', 'albumin', 'urea', 'uric acid', 'microalbumin', 'cystatin', 'kidney', 'renal'],
+  'Thyroid': ['thyroid', 'thyroxine', 'triiodothyronine', 'thyroglobulin', 'tpo antibody'],
+  'Liver': ['transaminase', 'alanine aminotransferase', 'aspartate aminotransferase', 'alkaline phosphatase', 'bilirubin', 'gamma gt', 'albumin', 'liver', 'hepatic'],
+  'Blood Count': ['hemoglobin', 'hematocrit',  'platelet',  'neutrophil', 'lymphocyte', 'monocyte', 'eosinophil', 'basophil'],
+  'Electrolytes': ['sodium', 'potassium', 'chloride', 'calcium', 'magnesium', 'phosphate', 'bicarbonate'],
+  'Iron': ['iron', 'ferritin', 'transferrin', 'tibc', 'saturation'],
+  'Inflammation': [ 'c-reactive protein', 'sedimentation', 'fibrinogen'],
+  'Vitamins': ['vitamin', 'folate', 'folic acid', 'b12', 'cobalamin', 'vitamin d', '25-oh'],
+  'Hormones': ['testosterone', 'estrogen', 'estradiol', 'progesterone', 'cortisol', 'prolactin', 'dhea', 'androgen'],
+  'Other': []
+};
+
 export const getTestCategories = (data: AllResults): Record<string, string[]> => {
-  // This is a simple categorization based on test name patterns
-  const categories: Record<string, string[]> = {
-    'Diabetes': [],
-    'Lipids': [],
-    'Kidney': [],
-    'Thyroid': [],
-    'Liver': [],
-    'Other': []
-  };
+  // Initialize the categories with empty arrays
+  const categories: Record<string, string[]> = {};
+  
+  // Initialize all categories from the map
+  Object.keys(testCategoryMap).forEach(category => {
+    categories[category] = [];
+  });
   
   data.tests.forEach(test => {
-    const name = test.name.toLowerCase();
+    const testNameLower = test.name.toLowerCase();
+    let categorized = false;
     
-    if (name.includes('hba1c')) {
-      categories['Diabetes'].push(test.name);
-    } else if (name.includes('cholesterol') || name.includes('triglyceride') || name.includes('ldl')) {
-      categories['Lipids'].push(test.name);
-    } else if (name.includes('creatinine') || name.includes('egfr') || name.includes('albumin')) {
-      categories['Kidney'].push(test.name);
-    } else if (name.includes('thyroid') || name.includes('thyroxine') || name.includes('tsh')) {
-      categories['Thyroid'].push(test.name);
-    } else if (name.includes('transaminase') || name.includes('alt') || name.includes('ast')) {
-      categories['Liver'].push(test.name);
-    } else {
+    // Check each category's keywords for a match
+    for (const [category, keywords] of Object.entries(testCategoryMap)) {
+      // Skip the "Other" category in this initial pass
+      if (category === 'Other') continue;
+      
+      // Check if any keyword matches the test name
+      if (keywords.some(keyword => testNameLower.includes(keyword))) {
+        categories[category].push(test.name);
+        categorized = true;
+        break; // Assign to first matching category only
+      }
+    }
+    
+    // If not categorized elsewhere, put it in "Other"
+    if (!categorized) {
       categories['Other'].push(test.name);
     }
   });
