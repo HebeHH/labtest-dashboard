@@ -73,6 +73,10 @@ This application is designed to work with two types of data:
 - **Demo Data**: Sample lab test data included in the repository as JSON files in `public/data/demo/`. This allows you to explore the application without adding your own data.
 - **Personal Data**: Your own lab test results stored as JSON files in `public/data/real/` (in the gitignore file, for privacy).
 
+When viewing demo data, a prominent amber-colored banner appears at the top of the dashboard to clearly indicate you're viewing demonstration data, not real patient information:
+
+![Demo Data Banner](./images/demoBannerImage.png)
+
 ### Important: Using Index Files
 
 The application uses `index.json` files in both the demo and real data directories to determine which data files to load. This approach provides several benefits:
