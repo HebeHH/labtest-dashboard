@@ -127,40 +127,129 @@ This approach saves you from manually formatting your data and works well with m
 
 ### Data Structure
 
-Your JSON files should follow this structure:
+#### Type Specification
+
+The lab test dashboard data follows this TypeScript type structure:
+
+```typescript
+type LabData = {
+  // Array of test definitions
+  tests: {
+    name: string;                  // Unique name identifying the test
+    description: string;           // Description of what the test measures and its purpose
+    target: {
+      description: string;         // Description of the reference/target range
+      range: {
+        top?: number;              // Upper limit (optional if open-ended)
+        bottom?: number;           // Lower limit (optional if open-ended)
+        value: 'Excellent' | 'Acceptable' | 'Bad'; // Interpretation of results in this range
+      }[];
+    };
+    specimenType: 'Blood' | 'Serum' | 'Urine' | 'Other'; // Sample type
+    units: string;                 // Units of measurement (e.g., "mmol/L", "μmol/L")
+  }[];
+  
+  // Array of test results
+  results: {
+    test: string;                  // Must match a test name from the tests array
+    date: string;                  // In format 'DD MMM YYYY' (e.g., "15 Jan 2023")
+    result: {
+      result: number;              // Numeric result value
+      resultRange?: {              // Optional - for results reported as ranges
+        top?: number;              // Upper bound (e.g., for "< 5" results)
+        bottom?: number;           // Lower bound (e.g., for "> 10" results)
+      };
+      resultValid: boolean;        // Whether the result is valid (false if test failed)
+      resultAcceptability: 'Excellent' | 'Acceptable' | 'Bad'; // Based on target ranges
+    } | {
+      resultValid: false;          // For invalid results
+    };
+    resultNotes: string;           // Additional notes about this specific result
+    additionalInfo: string;        // Any other relevant information
+  }[];
+}
+```
+
+#### Example JSON
+
+Here's a practical example of lab data in the required format:
 
 ```json
 {
   "tests": [
     {
-      "name": "Test Name",
-      "description": "Test description",
+      "name": "Glucose Fasting",
+      "description": "Measures blood sugar levels after an overnight fast to screen for diabetes",
       "target": {
-        "description": "Reference range description",
+        "description": "Normal fasting glucose range",
         "range": [
           { "top": 3.9, "value": "Bad" },
           { "bottom": 3.9, "top": 5.5, "value": "Excellent" },
-          { "bottom": 5.5, "value": "Bad" }
+          { "bottom": 5.5, "top": 6.9, "value": "Acceptable" },
+          { "bottom": 6.9, "value": "Bad" }
         ]
       },
-      "specimenType": "Blood/Urine/etc",
-      "units": "Unit of measurement"
+      "specimenType": "Blood",
+      "units": "mmol/L"
     },
-    // More tests...
+    {
+      "name": "HbA1c",
+      "description": "Measure of average blood glucose levels over the past 2-3 months",
+      "target": {
+        "description": "Glycated hemoglobin target range",
+        "range": [
+          { "top": 42, "value": "Excellent" },
+          { "bottom": 42, "top": 48, "value": "Acceptable" },
+          { "bottom": 48, "value": "Bad" }
+        ]
+      },
+      "specimenType": "Blood",
+      "units": "mmol/mol"
+    }
   ],
   "results": [
     {
-      "test": "Test Name",
-      "date": "DD MMM YYYY",
+      "test": "Glucose Fasting",
+      "date": "15 Jan 2023",
       "result": {
-        "result": 4.2,
+        "result": 4.8,
         "resultValid": true,
         "resultAcceptability": "Excellent"
       },
-      "resultNotes": "Additional notes",
-      "additionalInfo": "More information"
+      "resultNotes": "Tested after 12 hour fast",
+      "additionalInfo": "Within normal range"
     },
-    // More results...
+    {
+      "test": "Glucose Fasting",
+      "date": "22 Apr 2023",
+      "result": {
+        "result": 5.9,
+        "resultValid": true,
+        "resultAcceptability": "Acceptable"
+      },
+      "resultNotes": "Slightly elevated",
+      "additionalInfo": "Retest recommended in 3 months"
+    },
+    {
+      "test": "HbA1c",
+      "date": "15 Jan 2023",
+      "result": {
+        "result": 39,
+        "resultValid": true,
+        "resultAcceptability": "Excellent"
+      },
+      "resultNotes": "Well controlled",
+      "additionalInfo": "Continue current management"
+    },
+    {
+      "test": "HbA1c",
+      "date": "15 Jul 2023",
+      "result": {
+        "resultValid": false
+      },
+      "resultNotes": "Sample hemolyzed",
+      "additionalInfo": "Please retest"
+    }
   ]
 }
 ```
